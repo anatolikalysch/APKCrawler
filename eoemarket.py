@@ -12,7 +12,6 @@ class eoemarket_crawler(two_way_crawler):
         if not os.path.exists(self.folder_name):
             os.mkdir(self.folder_name)
 
-
     def extraction_routine(self, string):
         if self.game:
             apps = re.findall(r'.*href="(/game/.*?\.html)".*', string)
@@ -25,10 +24,11 @@ class eoemarket_crawler(two_way_crawler):
                 if os.path.exists(self.folder_name + apk_name):
                     continue
                 else:
-                    website = requests.get(self.baseUrl + app, timeout=self.timeout).text
+                    website = requests.get(self.baseUrl + app, timeout=self.timeout, headers=self.header).text
                     dl_link = re.findall(r'href="(http://www.eoemarket.com/download/.*?)"', website)[0]
 
-                    apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True, timeout=self.timeout)
+                    apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True, timeout=self.timeout,
+                                             headers=self.header)
 
                     with open(self.folder_name + apk_name, 'wb') as f:
                         for chunk in apk_bytes.iter_content(chunk_size=1024):
@@ -36,7 +36,6 @@ class eoemarket_crawler(two_way_crawler):
                                 f.write(chunk)
             except Exception as e:
                 pass
-
 
     def mutate_url(self, url, counter):
         if self.game:

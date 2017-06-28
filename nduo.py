@@ -1,5 +1,6 @@
 from crawler import *
 
+
 class nduo_crawler(crawler):
     def __init__(self):
         super().__init__('http://www.nduo.cn/', 'http://market2.nduoa.com/softs.ashx?act=207&resId=984216')
@@ -22,7 +23,8 @@ class nduo_crawler(crawler):
                 pass
             else:
                 link = 'http://market2.nduoa.com/softs.ashx?act=207&resId=9%05d' % ctr
-                apk_bytes = requests.get(link, allow_redirects=True, stream=True, timeout=self.timeout)
+                apk_bytes = requests.get(link, allow_redirects=True, stream=True, timeout=self.timeout,
+                                         headers=self.header)
 
                 with open(self.folder_name + apk_name, 'wb') as f:
                     for chunk in apk_bytes.iter_content(chunk_size=1024):
@@ -30,4 +32,3 @@ class nduo_crawler(crawler):
                             f.write(chunk)
         except:
             pass
-

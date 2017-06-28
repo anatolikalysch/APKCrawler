@@ -1,5 +1,6 @@
 from crawler import *
 
+
 class fdroid_crawler(crawler):
     def __init__(self):
         super().__init__('https://f-droid.org/repository/browse/',
@@ -9,7 +10,7 @@ class fdroid_crawler(crawler):
             os.mkdir(self.folder_name)
 
     def mutate_url(self, url, counter):
-        result = 'https://f-droid.org/repository/browse/?fdpage={}'.format(counter+1)
+        result = 'https://f-droid.org/repository/browse/?fdpage={}'.format(counter + 1)
         return result
 
     def extraction_routine(self, string):
@@ -18,7 +19,7 @@ class fdroid_crawler(crawler):
 
         for app in apps:
             try:
-                website = requests.get(app, timeout=self.timeout).text
+                website = requests.get(app, timeout=self.timeout, headers=self.header).text
                 dl_links = re.findall(r'href="(https://f-droid.org/repo/.*?\.apk)"', website)
                 for link in dl_links:
                     try:
@@ -26,7 +27,8 @@ class fdroid_crawler(crawler):
                         if os.path.exists(self.folder_name + apk_name):
                             continue
                         else:
-                            apk_bytes = requests.get(link, allow_redirects=True, stream=True, timeout=self.timeout)
+                            apk_bytes = requests.get(link, allow_redirects=True, stream=True, timeout=self.timeout,
+                                                     headers=self.header)
 
                             with open(self.folder_name + apk_name, 'wb') as f:
                                 for chunk in apk_bytes.iter_content(chunk_size=1024):

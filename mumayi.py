@@ -1,5 +1,6 @@
 from crawler import *
 
+
 class mumayi_crawler(crawler):
     def __init__(self):
         super().__init__('http://down.mumayi.com/', 'http://down.mumayi.com/1')
@@ -32,7 +33,7 @@ class mumayi_crawler(crawler):
 
     def download(self, apk_name, ctr):
         apk_bytes = requests.get('http://down.mumayi.com/{}'.format(ctr), allow_redirects=True, stream=True,
-                                 timeout=self.timeout)
+                                 timeout=self.timeout, headers=self.header)
         if apk_bytes.status_code != 200:
             pass
         else:

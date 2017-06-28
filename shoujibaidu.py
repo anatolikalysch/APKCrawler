@@ -24,9 +24,10 @@ class shoujibaidu_crawler(crawler):
                 pass
             else:
                 link = 'http://shouji.baidu.com/software/1%07d.html' % ctr
-                website = requests.get(link, timeout=self.timeout).text
+                website = requests.get(link, timeout=self.timeout, headers=self.header).text
                 dl_link = re.findall(r'.*href="(http://p.gdown.baidu.com/.*?)".*', website)[0]
-                apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True, timeout=self.timeout)
+                apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True, timeout=self.timeout,
+                                         headers=self.header)
 
                 if apk_bytes.status_code != 200:
                     pass

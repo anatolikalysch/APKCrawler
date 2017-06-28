@@ -11,7 +11,6 @@ class anruan_crawler(two_way_crawler):
         if not os.path.exists(self.folder_name):
             os.mkdir(self.folder_name)
 
-
     def extraction_routine(self, string):
         if self.game:
             apps = re.findall(r'.*href="(http://game.anruan.com/g-.*?/)".*', string)
@@ -24,12 +23,13 @@ class anruan_crawler(two_way_crawler):
                 if os.path.exists(self.folder_name + apk_name):
                     continue
                 else:
-                    website = requests.get(app, timeout=self.timeout).text
+                    website = requests.get(app, timeout=self.timeout, headers=self.header).text
                     if self.game:
                         dl_link = re.findall(r'href="(http://game.anruan.com/gdown.php\?id=.*?)"', website)[0]
                     else:
                         dl_link = re.findall(r'href="(http://soft.anruan.com/down.php\?id=.*?)"', website)[0]
-                    apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True, timeout=self.timeout)
+                    apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True, timeout=self.timeout,
+                                             headers=self.header)
 
                     if apk_bytes.status_code != 200:
                         pass
@@ -41,9 +41,7 @@ class anruan_crawler(two_way_crawler):
             except Exception as e:
                 print(self.folder_name[:-1] + ': ' + str(e.args))
 
-
     def mutate_url(self, url, counter):
         split = url.split('.com')
         result = split[0] + '.com/index_{}.html'.format(counter)
         return result
-

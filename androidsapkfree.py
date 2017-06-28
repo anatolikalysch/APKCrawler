@@ -21,10 +21,10 @@ class androidsapkfree_crawler(two_way_crawler):
                 if os.path.exists(self.folder_name + apk_name):
                     continue
                 else:
-                    website = requests.get(app, timeout=self.timeout).text
+                    website = requests.get(app, timeout=self.timeout, headers=self.header).text
                     dl_link = re.findall(r'href="(http://.*?\.apk"*?)".*', website)[0]
 
-                    apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True, timeout=self.timeout)
+                    apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True, timeout=self.timeout, headers=self.header)
 
                     if apk_bytes.status_code != 200:
                         pass

@@ -1,5 +1,6 @@
 from crawler import *
 
+
 class apkpure_crawler(two_way_crawler):
     def __init__(self):
         super().__init__('https://apkpure.com/game',
@@ -11,7 +12,6 @@ class apkpure_crawler(two_way_crawler):
         if not os.path.exists(self.folder_name):
             os.mkdir(self.folder_name)
 
-
     def extraction_routine(self, string):
         apps = re.findall(r'.*href="(/.*?/download\?from=category)".*', string)
 
@@ -21,10 +21,11 @@ class apkpure_crawler(two_way_crawler):
                 if os.path.exists(self.folder_name + apk_name):
                     continue
                 else:
-                    website = requests.get(self.baseUrl + app, timeout=self.timeout).text
+                    website = requests.get(self.baseUrl + app, timeout=self.timeout, headers=self.header).text
                     dl_link = re.findall(r'href="(https://download.apkpure.com/.*?)">click.*', website)[0]
 
-                    apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True, timeout=self.timeout)
+                    apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True, timeout=self.timeout,
+                                             headers=self.header)
 
                     if apk_bytes.status_code != 200:
                         pass
@@ -35,7 +36,6 @@ class apkpure_crawler(two_way_crawler):
                                     f.write(chunk)
             except Exception as e:
                 print(self.folder_name[:-1] + ': ' + str(e.args))
-
 
     def mutate_url(self, url, counter):
         return url.split('?')[0] + '?page={}'.format(counter)

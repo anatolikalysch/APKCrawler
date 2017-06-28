@@ -1,5 +1,6 @@
 from crawler import *
 
+
 class appsapk_crawler(crawler):
     def __init__(self):
         super().__init__('http://www.appsapk.com/android/all-apps/',
@@ -13,19 +14,19 @@ class appsapk_crawler(crawler):
         result = 'https://www.appsapk.com/android/all-apps/page/{}/'.format(self.counter)
         return result
 
-
     def extraction_routine(self, string):
         apps = re.findall(r'.*href="(http://www.appsapk.com/.*?/)".*', string)
         apps.extend(re.findall(r'.*href="(https://www.appsapk.com/.*?/)".*', string))
         for app in apps:
             try:
-                app_website = requests.get(app, timeout=self.timeout).text
+                app_website = requests.get(app, timeout=self.timeout, headers=self.header).text
                 dl_link = re.findall('.*href="(http://.*?appsapk\.com/.*?\.apk)".*', app_website)[0]
                 apk_name = dl_link.split('/')[-1]
                 if os.path.exists(self.folder_name + apk_name):
                     continue
                 else:
-                    apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True, timeout=self.timeout)
+                    apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True, timeout=self.timeout,
+                                             headers=self.header)
 
                     if apk_bytes.status_code != 200:
                         pass

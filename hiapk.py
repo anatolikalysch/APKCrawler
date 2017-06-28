@@ -12,19 +12,20 @@ class hiapk_crawler(two_way_crawler):
         if not os.path.exists(self.folder_name):
             os.mkdir(self.folder_name)
 
-
     def extraction_routine(self, string):
         apps = re.findall(r'.*href="(/appdown/.*?)".*', string)
         for app in apps:
             try:
                 apk_name = app.split('down/')[1].rstrip('/') + '.apk'
                 if os.path.exists(self.folder_name + apk_name):
-                    continue
+                    pass
                 else:
                     if self.game:
-                        apk_bytes = requests.get(self.baseGameUrl + app + '/', allow_redirects=True, stream=True, timeout=self.timeout)
+                        apk_bytes = requests.get(self.baseGameUrl + app + '/', allow_redirects=True, stream=True,
+                                                 timeout=self.timeout, headers=self.header)
                     else:
-                        apk_bytes = requests.get(self.baseSoftUrl + app + '/', allow_redirects=True, stream=True, timeout=self.timeout)
+                        apk_bytes = requests.get(self.baseSoftUrl + app + '/', allow_redirects=True, stream=True,
+                                                 timeout=self.timeout, headers=self.header)
 
                     if apk_bytes.status_code != 200:
                         pass
@@ -36,6 +37,8 @@ class hiapk_crawler(two_way_crawler):
             except Exception as e:
                 print(self.folder_name[:-1] + ': ' + str(e.args))
 
-
     def mutate_url(self, url, counter):
-        return url[:-1] + str(counter)
+        if self.game:
+            return 'http://apk.hiapk.com/games?sort=5&pi={}'.format(counter)
+        else:
+            return 'http://apk.hiapk.com/apps?sort=5&pi={}'.format(counter)
