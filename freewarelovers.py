@@ -28,7 +28,7 @@ class freewarelovers_crawler(crawler):
                 else:
                     link = self.baseUrl + app
                     website = requests.get(link, timeout=self.timeout, headers=self.header).text
-                    dl_link = re.findall(r'.*href="(/android/download/.*?\.apk)".*', website)[0]
+                    dl_link = re.findall(r'.*href="(.*?\.apk)".*', website)[0]
                     apk_bytes = requests.get(self.baseUrl + dl_link, allow_redirects=True, stream=True, timeout=self.timeout,
                                              headers=self.header)
 
