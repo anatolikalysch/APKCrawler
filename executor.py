@@ -14,9 +14,8 @@ from play_mob import play_mob_crawler
 from shoujibaidu import shoujibaidu_crawler
 from slideme import slideme_crawler
 from androidsapkfree import androidsapkfree_crawler
-from up2down import *
-from ONEappmarket import *
+from mobileapkworld import *
 
 
-c = ONEappmarket_crawler()
+c = mobileapkworld_crawler()
 c.start_crawl()
