@@ -1,32 +1,34 @@
 from crawler import *
 
-
-class apkmirrordownload_crawler(crawler):
+class up2down_crawler(crawler):
     def __init__(self):
-        super().__init__('https://www.apkmirrordownload.com/',
-                         'https://www.apkmirrordownload.com/page/2/')
-        self.urlBase = 'http://www.apkmirrordownload.com'
-        self.folder_name = 'apkmirrordownload/'
+        super().__init__('https://en.uptodown.com/android/newreleases',
+                         'https://en.uptodown.com/android/newreleases/')
+        self.urlBase = 'https://en.uptodown.com'
+        self.folder_name = 'up2down/'
         if not os.path.exists(self.folder_name):
             os.mkdir(self.folder_name)
 
     def mutate_url(self, url, counter):
-        result = 'https://www.apkmirrordownload.com/page/{}/'.format(self.counter)
+        result = self.template + '{}'.format(self.counter)
         return result
 
     def extraction_routine(self, string):
-        apps = re.findall(r'.*href="(https://www.apkmirrordownload.com/apk/.*?)" title=".*', string)
+        apps = re.findall(r'.*href="(http.*?en.uptodown.com/android)".*', string)
         for app in apps:
             try:
                 app_website = requests.get(app, timeout=self.timeout, headers=self.header).text
                 dl_link = re.findall(
-                    '.*href="//apkmirrordownload.com(/wp-content/themes/apkmirrordownload/download\.php\?type=apk.*?id=.*?)".*',
+                    r'.*href="(http.*?\.en\.uptodown\.com/android/download)".*',
                     app_website)[0]
-                apk_name = app.split('/apk/')[1].rstrip('/') + '.apk'
+                apk_name = dl_link.split('.en.')[0].lstrip('https://') + '.apk'
+                no_app = requests.get(dl_link, allow_redirects=True, stream=True,
+                                             timeout=self.timeout, headers=self.header).text
+                dl_link = re.findall(r'.*href="(http.*?uptodown\.com/dwn/.*?)"', no_app)[0]
                 if os.path.exists(self.folder_name + apk_name):
                     continue
                 else:
-                    apk_bytes = requests.get(self.urlBase + dl_link, allow_redirects=True, stream=True,
+                    apk_bytes = requests.get(dl_link, allow_redirects=True, stream=True,
                                              timeout=self.timeout, headers=self.header)
 
                     with open(self.folder_name + apk_name, 'wb') as f:
