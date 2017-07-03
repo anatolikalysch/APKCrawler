@@ -15,7 +15,8 @@ from shoujibaidu import shoujibaidu_crawler
 from slideme import slideme_crawler
 from androidsapkfree import androidsapkfree_crawler
 from up2down import *
+from ONEappmarket import *
 
 
-c = up2down_crawler()
+c = ONEappmarket_crawler()
 c.start_crawl()
